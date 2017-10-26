@@ -1,0 +1,148 @@
+<html>
+<!--
+
+1. Edit the left and right frame URLs where marked at the bottom of this file
+
+2. Copy these files:
+
+		fullscreen_instructions_4.html
+		split.js
+		normalize.css
+		pleasewait.html
+
+
+	To folder:
+
+		C:\Program Files (x86)\CloudShell\Portal\Content\
+
+
+3. Set the blueprint instructions to only this code:
+
+	<iframe src="/Content/fullscreen_instructions_4.html" width="99%" height="100%"></iframe>
+
+
+
+-->
+<head>
+
+<!-- 
+
+MIT license
+
+https://github.com/nathancahill/Split.js/blob/master/LICENSE.txt
+https://github.com/necolas/normalize.css/blob/master/LICENSE.md
+
+-->
+
+<script src="/scripts/jquery-1.11.1.js"></script>
+<script src="/scripts/jquery-ui-1.11.2.js"></script>
+
+<link rel="stylesheet" href="normalize.css">
+<style>
+  html, body {
+    height: 100%;
+  }
+
+  body {
+    padding: 8px;
+    background-color: #F6F6F6;
+    box-sizing: border-box;
+  }
+
+  .split {
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .content {
+    border: 1px solid #C0C0C0;
+    box-shadow: inset 0 1px 2px #e4e4e4;
+    background-color: #fff;
+  }
+
+  .gutter {
+    background-color: transparent;
+
+    background-repeat: no-repeat;
+    background-position: 50%;
+  }
+
+  .gutter.gutter-horizontal {
+    cursor: col-resize;
+  }
+
+  .gutter.gutter-vertical {
+    cursor: row-resize;
+  }
+
+  .split.split-horizontal, .gutter.gutter-horizontal {
+    height: 100%;
+    float: left;
+  }
+
+  </style>
+
+<script src="split.js"></script>
+
+<script>
+$(function() {
+
+	console.log('ready called');
+	$('.left-side-panel', window.parent.document).css('width', '100%');
+	$('.notes-side-panel', window.parent.document).css('width', '100%');
+
+	if(window.parent.document.URL.indexOf('diagramType=Topology') >= 0) {
+		$('#right').html('No content here in blueprint design mode')
+		return
+	}
+
+	a = window.parent.document.URL.split('/')
+	resid = a[a.length-1]
+
+	url = [a[0], a[1], a[2], 'Content', resid+'.txt'].join('/')
+
+	console.log('Retrieving SDI frame URL from ' + url);
+
+	$.ajax({
+		'url': url,
+		'success': function(data, status, xhr) {
+			righturl = data.trim()
+			console.log('Updating SDI frame to URL: ' + righturl);
+			$('#rightiframe').attr('src', righturl)
+		},
+		'error': function(xhr, status, err) {
+			console.log(xhr);
+			console.log(status);
+			console.log(err);
+			$('#right').html('Attempted to download file<br><pre>' + url + '</pre><br>which should contain the full URL of the right iframe.<br><br>Failed to load: ' + status + ': ' + err)
+		}
+	})
+
+	Split(['#left', '#right'], { sizes: [25, 75] })
+
+
+})
+</script>
+
+
+
+</head>
+<body>
+
+			<div> 
+				<div class="split split-horizontal" id="left">
+					<iframe width="99%" height="99%" src="/Content/local.html"></iframe> <!-- Set lesson content URL here -->
+					
+				</div>
+				<div  class="split split-horizontal" id="right">
+					<iframe id="rightiframe" width="99%" height="99%" src="/Content/pleasewait.html"></iframe> <!-- This will be dynamically overwritten by the JS code above -->
+					
+				</div>
+			</div>
+
+</body>
+</html>
