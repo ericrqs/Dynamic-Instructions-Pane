@@ -1,5 +1,11 @@
 # Dynamic-Instructions-Pane
 
+## Overview
+
+Extends the width of the Instructions pane so it covers the full width of the portal.
+
+Splits the instructions into a left pane for training material and a right pane for capturing a third-party web GUI with a dynamic URL connected to the reservation id.
+
 
 Uses these third-party components:
 
